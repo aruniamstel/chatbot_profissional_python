@@ -82,7 +82,7 @@ def processar_mensagem(remetente, mensagem_recebida):
     
     # --- Ramo Principal: Introdução e Opções Iniciais ---
     
-    if msg_normalizada in ["olá", "oi", "começar", "menu"]:
+    if msg_normalizada in ["olá", "oi", "bom dia", "começar", "menu"]:
         apresentacao = (
             "🤖 *Bem-vindo(a) à ITAC Desenvolvimento de Soluções Informatizadas!* "
             "Sou seu assistente virtual. Em que posso te ajudar hoje?"
