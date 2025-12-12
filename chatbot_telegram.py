@@ -7,8 +7,8 @@ import threading
 import sys
 from datetime import time as dt_time, datetime, timedelta
 
-# --- Configurações (Substituir pelo Token) ---
-TELEGRAM_BOT_TOKEN = "8281053342:AAH0J2K-QabHtW4WHE8cLWYCVhFBSZFeHX0" 
+# --- Configurações (Substitua Pelo Seu Token) ---
+TELEGRAM_BOT_TOKEN = "SEU_TOKEN_DO_TELEGRAM_AQUI" 
 # ------------------------------------------------
 
 # Configuração de logging básica
@@ -341,8 +341,8 @@ async def follow_up_task(application: Application, msg):
 if __name__ == '__main__':
     import asyncio 
 
-    if "8281053342:AAH0J2K-QabHtW4WHE8cLWYCVhFBSZFeHX0" in TELEGRAM_BOT_TOKEN:
-        print("ERRO: Por favor, substitua '8281053342:AAH0J2K-QabHtW4WHE8cLWYCVhFBSZFeHX0' pelo token real do BotFather.")
+    if "SEU_TOKEN_DO_TELEGRAM_AQUI" in TELEGRAM_BOT_TOKEN:
+        print("ERRO: Por favor, substitua 'SEU_TOKEN_DO_TELEGRAM_AQUI' pelo token real do BotFather.")
         sys.exit(1)
         
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
