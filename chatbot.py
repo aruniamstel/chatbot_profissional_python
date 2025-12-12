@@ -166,6 +166,8 @@ def processar_mensagem(remetente, mensagem_recebida):
             "Obrigado pelo seu interesse!"
         )
         enviar_texto(remetente, resposta)
+
+        print(f"\n[DEBUG] Tamanho atual do prospects_db: {len(prospects_db)}")
         print(f"\n[INFO] Número {remetente} adicionado aos prospects para follow-up.")
         return
         
