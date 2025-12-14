@@ -6,9 +6,10 @@ from telegram.ext import JobQueue
 import threading
 import sys
 from datetime import time as dt_time, datetime, timedelta
+from codigo_bot import TELEGRAM_TOKEN 
 
-# --- Configurações (Substitua Pelo Seu Token) ---
-TELEGRAM_BOT_TOKEN = "SEU_TOKEN_DO_TELEGRAM_AQUI" 
+# --- Configurações (Substitua Pelo Seu Token, o token fica salvo em um arquivo a parte) ---
+TELEGRAM_BOT_TOKEN = TELEGRAM_TOKEN
 # ------------------------------------------------
 
 # Configuração de logging básica
@@ -367,7 +368,7 @@ if __name__ == '__main__':
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_recebe_nome_contrato),
             ],
         },
-        fallbacks=[CommandHandler("cancel", cancel)],
+        fallbacks=[CommandHandler("cancel", cancel),CommandHandler("start", start)],
     )
 
     application.add_handler(conv_handler)
