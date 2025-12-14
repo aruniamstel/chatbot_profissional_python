@@ -9,7 +9,8 @@ A lógica inicial de conversas do chatbot está implementada e funcional. Já es
 ## 🔧 Tecnologias Utilizadas
 - Pyhton 3
 - Flask
+- Biblioteca python-telegram-bot
 
 # Desenvolvedor e Autor
-Aruni van Amstel  
+## Aruni van Amstel  
 
