@@ -34,11 +34,6 @@ REGRAS DE RESPOSTA:
 5. Sempre que terminar uma explicação longa, pergunte se o usuário gostaria de falar com um consultor humano.
 """
 
-model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
-    system_instruction=SYSTEM_PROMPT
-)
-
 async def chamar_gemini(pergunta_usuario):
     try:
         # No novo SDK, usamos o método 'models.generate_content'
@@ -54,6 +49,19 @@ async def chamar_gemini(pergunta_usuario):
     except Exception as e:
         print(f"Erro no Gemini: {e}")
         return "Tive um erro ao processar sua pergunta. Tente novamente ou use /start."
+    
+async def fallback_gemini_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Lida com textos fora do menu usando o Gemini."""
+    pergunta = update.message.text
+    
+    # Feedback visual de "digitando..."
+    await context.bot.send_chat_action(chat_id=update.message.chat_id, action="typing")
+    
+    resposta_ia = await chamar_gemini(pergunta)
+    
+    await update.message.reply_text(resposta_ia, parse_mode='Markdown')
+    
+    return MENU_PRINCIPAL # Mantém o usuário no menu principal
 
 # --- Configurações (Substitua Pelo Seu Token, o token fica salvo em um arquivo a parte) ---
 TELEGRAM_BOT_TOKEN = TELEGRAM_TOKEN
@@ -176,14 +184,6 @@ async def menu_principal_handler(update: Update, context: ContextTypes.DEFAULT_T
             await update.message.reply_text("Por favor, digite o *nome completo* da pessoa que deve receber o follow-up de contrato:")
             return RECEBE_NOME_CONTRATO
 
-    # --- Fallback ---
-    else:
-        await enviar_texto(
-            update, 
-            context, 
-            "🤔 Opção inválida. Por favor, use os botões ou digite /start para o menu."
-        )
-        return MENU_PRINCIPAL
 
 # 3. Respostas de Cliente
 async def cliente_opcoes_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -402,11 +402,11 @@ if __name__ == '__main__':
         states={
             MENU_PRINCIPAL: [
                 MessageHandler(filters.Regex("^(Sou Cliente|Ainda Não Sou Cliente|Configurar Contrato \(Dev\))$"), menu_principal_handler),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, menu_principal_handler) 
+                MessageHandler(filters.TEXT & ~filters.COMMAND, fallback_gemini_handler) 
             ],
             CLIENTE_OPCOES: [
                 MessageHandler(filters.Regex("^(Suporte SLA|Questões Contratuais)$"), cliente_opcoes_handler),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, cliente_opcoes_handler)
+                MessageHandler(filters.TEXT & ~filters.COMMAND, fallback_gemini_handler)
             ],
             CONTRATO_OPCOES: [
                 MessageHandler(filters.Regex("^(Remover Agendamento|Voltar ao Menu)$"), contrato_opcoes_handler),
