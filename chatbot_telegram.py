@@ -7,6 +7,53 @@ import threading
 import sys
 from datetime import time as dt_time, datetime, timedelta
 from codigo_bot import TELEGRAM_TOKEN 
+from google import genai # Mudou a importação
+from google.genai import types # Para as instruções de sistema
+from chave_api import GOOGLE_API_KEY
+GEMINI_API_KEY = GOOGLE_API_KEY
+
+# --- Configuração Refinada do Gemini ---
+# Inicializa o Cliente
+client = genai.Client(api_key=GEMINI_API_KEY)
+
+# O "Prompt de Sistema" define as regras de comportamento da IA
+SYSTEM_PROMPT = """
+Você é o Assistente Virtual Inteligente da ITAC Desenvolvimento de Soluções Informatizadas.
+Seu objetivo é ajudar pequenos empresários a entenderem como software pode melhorar seus negócios.
+
+DIRETRIZES DE PERSONALIDADE:
+- Tom: Profissional, empático, direto e encorajador.
+- Linguagem: Evite termos técnicos excessivos. Se usar um (ex: 'API' ou 'Cloud'), explique brevemente o benefício.
+- Foco: Soluções personalizadas para pequenos negócios (Sistemas de gestão, automação de processos, integração de APIs).
+
+REGRAS DE RESPOSTA:
+1. Se o usuário perguntar o que você faz: Liste que a ITAC cria softwares sob medida para automatizar tarefas e facilitar a gestão.
+2. Se o usuário pedir suporte técnico complexo: Oriente-o a clicar no botão 'Sou Cliente' e depois 'Suporte SLA' usando o comando /start.
+3. Se o usuário perguntar preços: Explique que cada projeto é único e que um consultor entrará em contato para fazer um orçamento gratuito.
+4. Jamais invente parcerias ou serviços que não sejam desenvolvimento de software.
+5. Sempre que terminar uma explicação longa, pergunte se o usuário gostaria de falar com um consultor humano.
+"""
+
+model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    system_instruction=SYSTEM_PROMPT
+)
+
+async def chamar_gemini(pergunta_usuario):
+    try:
+        # No novo SDK, usamos o método 'models.generate_content'
+        response = client.models.generate_content(
+            model="gemini-1.5-flash",
+            contents=pergunta_usuario,
+            config=types.GenerateContentConfig(
+                system_instruction=SYSTEM_PROMPT,
+                temperature=0.7 # Adiciona um pouco de criatividade natural
+            )
+        )
+        return response.text
+    except Exception as e:
+        print(f"Erro no Gemini: {e}")
+        return "Tive um erro ao processar sua pergunta. Tente novamente ou use /start."
 
 # --- Configurações (Substitua Pelo Seu Token, o token fica salvo em um arquivo a parte) ---
 TELEGRAM_BOT_TOKEN = TELEGRAM_TOKEN
